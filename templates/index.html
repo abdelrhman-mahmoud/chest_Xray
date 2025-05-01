@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict X-ray PNEUMONIA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-6 text-center">Predict X-ray PNEUMONIA</h1>
+        
+        <form id="predict-form" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2" for="image">
+                    Upload Image
+                </label>
+                <input type="file" id="image" name="image" accept="image/*" 
+                       class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 
+                              file:rounded-md file:border-0 file:text-sm file:font-semibold 
+                              file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2" for="model">
+                    Select Model
+                </label>
+                <select id="model" name="model" 
+                        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="vit">ViT (Vision Transformer)</option>
+                    <option value="inception">Inception V3</option>
+                </select>
+            </div>
+            
+            <button type="submit" 
+                    class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition">
+                Predict
+            </button>
+        </form>
+        
+        {% if error %}
+            <div class="mt-4 p-4 bg-red-100 text-red-700 rounded-md">
+                {{ error }}
+            </div>
+        {% endif %}
+        
+        {% if prediction %}
+            <div class="mt-4 p-4 bg-green-100 text-green-700 rounded-md">
+                <p><strong>Model:</strong> {{ model }}</p>
+                <p><strong>Prediction:</strong> {{ prediction }}</p>
+                <p><strong>Confidence:</strong> {{ confidence }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.getElementById('model').addEventListener('change', function() {
+            const form = document.getElementById('predict-form');
+            const model = this.value;
+            form.action = `/api/predict/${model}`;
+        });
+
+        // Set initial form action based on default selected model
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('predict-form');
+            const model = document.getElementById('model').value;
+            form.action = `/api/predict/${model}`;
+        });
+    </script>
+</body>
+</html>
